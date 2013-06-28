@@ -32,7 +32,7 @@ public class MylocationController {
 	public Mylocation getTesting(@PathVariable String name) {
  
 		Mylocation loc = new Mylocation();
-		loc.setLatitude(name);
+		loc.setLatitude(name + "sreeni");
 		loc.setLongitude(name);
 		
 		String str = "sreeni";  
