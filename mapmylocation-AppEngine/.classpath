@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/asm-3.1r.jar"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/spring-context-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/spring-beans-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/spring-core-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/spring-expression-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/spring-web-3.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nrajashekar/Downloads/spring-webmvc-3.0.5.RELEASE.jar" sourcepath="/Users/nrajashekar/.m2/repository/org/springframework/spring-webmvc/3.0.5.RELEASE/spring-webmvc-3.0.5.RELEASE-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/commons-logging-1.1.2/commons-logging-1.1.2.jar"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/apache-log4j-1.2.17/log4j-1.2.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/nrajashekar/Downloads/jersey-archive-1.13/lib/jackson-mapper-asl-1.9.2.jar"/>
+	<classpathentry kind="lib" path="/Users/nrajashekar/Downloads/jackson-core-asl-1.9.7.jar"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>

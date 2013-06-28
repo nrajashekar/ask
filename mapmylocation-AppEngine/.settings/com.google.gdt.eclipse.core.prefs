@@ -1,0 +1,5 @@
+#Sat May 04 17:33:43 PDT 2013
+eclipse.preferences.version=1
+jarsExcludedFromWebInfLib=/Users/nrajashekar/Downloads/antlr-2.7.6.jar|/Users/nrajashekar/Downloads/aopalliance-1.0.jar|/Users/nrajashekar/Downloads/asm-3.1r.jar|/Users/nrajashekar/Downloads/commons-logging-1.1.2/commons-logging-1.1.2.jar|/Users/nrajashekar/Downloads/apache-log4j-1.2.17/log4j-1.2.17.jar|/Users/nrajashekar/Downloads/spring-beans-3.0.5.RELEASE.jar|/Users/nrajashekar/Downloads/spring-context-3.0.5.RELEASE.jar|/Users/nrajashekar/Downloads/spring-core-3.0.5.RELEASE.jar|/Users/nrajashekar/Downloads/spring-expression-3.0.5.RELEASE.jar|/Users/nrajashekar/Downloads/spring-web-3.0.5.RELEASE.jar|/Users/nrajashekar/Downloads/spring-webmvc-3.0.5.RELEASE.jar
+warSrcDir=war
+warSrcDirIsOutput=true
