@@ -34,6 +34,9 @@ public class MylocationController {
 		Mylocation loc = new Mylocation();
 		loc.setLatitude(name);
 		loc.setLongitude(name);
+		
+		String str = "Sreeni";
+		
 		return loc;
  
 	}
