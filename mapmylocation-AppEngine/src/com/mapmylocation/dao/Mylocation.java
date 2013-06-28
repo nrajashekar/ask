@@ -5,7 +5,7 @@ public class Mylocation {
 	private String _latitude;
 	private String _longitude;
 	
-	private String str = "S";
+	private String str = "Sreeni";
 	
 	public void setLatitude(String latitude){
 		_latitude = latitude;
