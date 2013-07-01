@@ -86,12 +86,12 @@ public class MylocationController {
 		Key key = KeyFactory.createKey("question", request.getQuestion());
 		//create the question table
 		entity = new Entity("question", key);
-		//create the recipient list only while adding a new question
-		//adding more recipients can be done in a different API
 		entity.setProperty("key", key);
 		entity.setProperty("question", request.getQuestion());
 		entity.setProperty("owner",request.getOwnerId());
-		entity.setProperty("recipientList",request.getRecipientId());
+		List<Integer> recipientList = new ArrayList<Integer>();
+		recipientList.add(request.getRecipientId());
+		entity.setProperty("recipientList",recipientList.toArray());
 		entity.setProperty("answers","");
 		datastore.put(entity);
 	}
