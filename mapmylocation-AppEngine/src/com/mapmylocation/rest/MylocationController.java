@@ -99,11 +99,11 @@ public class MylocationController {
 	@SuppressWarnings("deprecation")
 	@RequestMapping(value="/get", method = RequestMethod.GET)
 	@ResponseBody
-	public GetRelatedQuestionsResponse createQuestion(@RequestBody GetRelatedQuestionsRequest request ) throws NotFoundException {
+	public GetRelatedQuestionsResponse createQuestion(@PathVariable int id ) throws NotFoundException {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		// create a new question
 		Query query = new Query("question");
-		query.addFilter("owner", FilterOperator.EQUAL, request.getMyId());
+		query.addFilter("owner", FilterOperator.EQUAL, id);
 		PreparedQuery pq = datastore.prepare(query);
 		Iterable<Entity> entityIterable= pq.asIterable();
 		Iterator<Entity> entityIterator = entityIterable.iterator();
