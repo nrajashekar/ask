@@ -75,23 +75,23 @@ public class MylocationController {
 	public void createQuestion(@RequestBody CreateQuestionRequest request ) throws NotFoundException {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		// create a new question
-		Query query = new Query("question");
-		query.addFilter("question", FilterOperator.EQUAL, request.getQuestion());
-		PreparedQuery pq = datastore.prepare(query);
-		Entity entity = pq.asSingleEntity();	
+		//Query query = new Query("question");
+		//query.addFilter("question", FilterOperator.EQUAL, request.getQuestion());
+		//PreparedQuery pq = datastore.prepare(query);
+		//Entity entity = pq.asSingleEntity();	
 		//TODO: to do it in the next pass
 		// if the entity is null create a new one.
 		// if the entity is not null.the check if the ownerId and the question already exists. If it does, we just need to update the question
 		
 		Key key = KeyFactory.createKey("question", request.getQuestion());
 		//create the question table
-		entity = new Entity("question", key);
+		Entity entity = new Entity("question", key);
 		entity.setProperty("key", key);
 		entity.setProperty("question", request.getQuestion());
 		entity.setProperty("owner",request.getOwnerId());
 		List<Integer> recipientList = new ArrayList<Integer>();
 		recipientList.add(request.getRecipientId());
-		entity.setProperty("recipientList",recipientList.toArray());
+		entity.setProperty("recipientList",recipientList);
 		entity.setProperty("answers","");
 		datastore.put(entity);
 	}
