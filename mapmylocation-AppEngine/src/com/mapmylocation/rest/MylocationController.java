@@ -85,7 +85,7 @@ public class MylocationController {
 		
 		Key key = KeyFactory.createKey("question", request.getQuestion());
 		//create the question table
-		Entity entity = new Entity("question", key);
+		Entity entity = new Entity(key);
 		entity.setProperty("key", key);
 		entity.setProperty("question", request.getQuestion());
 		entity.setProperty("owner",request.getOwnerId());
