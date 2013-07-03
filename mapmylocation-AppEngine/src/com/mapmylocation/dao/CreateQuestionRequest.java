@@ -3,7 +3,7 @@ package com.mapmylocation.dao;
 public class CreateQuestionRequest {
 
 	private String question;
-	private int recipientId;
+	private int recipientIdList[];
 	private int ownerId;
 
 	public void setQuestion( String question ) {
@@ -14,12 +14,12 @@ public class CreateQuestionRequest {
 		return question;
 	}
 
-	public void setRecipientId( int recipientId ) {
-		this.recipientId = recipientId;
+	public void setRecipientIdList( int[] recipientIdList ) {
+		this.recipientIdList = recipientIdList;
 	}
 
-	public int getRecipientId() {
-		return recipientId;
+	public int[] getRecipientIdList() {
+		return recipientIdList;
 	}
 
 	public int getOwnerId() {

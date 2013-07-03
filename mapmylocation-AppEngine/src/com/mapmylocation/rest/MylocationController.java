@@ -1,6 +1,7 @@
 package com.mapmylocation.rest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -22,7 +23,11 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.labs.repackaged.com.google.common.primitives.Ints;
 import com.mapmylocation.dao.CreateQuestionRequest;
 import com.mapmylocation.dao.GetRelatedQuestionsRequest;
 import com.mapmylocation.dao.GetRelatedQuestionsResponse;
@@ -82,28 +87,45 @@ public class MylocationController {
 		//TODO: to do it in the next pass
 		// if the entity is null create a new one.
 		// if the entity is not null.the check if the ownerId and the question already exists. If it does, we just need to update the question
-		
-		Key key = KeyFactory.createKey("question", request.getQuestion());
+		List<Entity> recipientMappingEntityList = new ArrayList<Entity>();
+		Key questionKey = KeyFactory.createKey("question", request.getQuestion() + new Integer(request.getOwnerId()).toString());
 		//create the question table
-		Entity entity = new Entity(key);
-		entity.setProperty("key", key);
-		entity.setProperty("question", request.getQuestion());
-		entity.setProperty("owner",request.getOwnerId());
-		List<Integer> recipientList = new ArrayList<Integer>();
-		recipientList.add(request.getRecipientId());
-		entity.setProperty("recipientList",recipientList);
-		entity.setProperty("answers","");
-		datastore.put(entity);
+		Entity questionEntity = new Entity("questionEntity", questionKey + new Integer(request.getOwnerId()).toString());
+		if( questionEntity.getProperties().size() != 2 ) {
+			//new entry is created
+			questionEntity.setProperty("question", request.getQuestion());
+			questionEntity.setProperty("owner",request.getOwnerId());
+			datastore.put(questionEntity);
+			
+			//add the owner to recipient mapping table
+			Entity recipientMappingEntity = new Entity( "recipientMappingEntity", questionKey + new Integer(request.getOwnerId()).toString());
+			recipientMappingEntity.setProperty("questionKey", questionKey);
+			recipientMappingEntity.setProperty("recipient", request.getOwnerId());
+			recipientMappingEntityList.add(recipientMappingEntity);
+		}
+		
+		//create question to recipient
+		for(int i = 0; i< request.getRecipientIdList().length; i++) {
+			Entity recipientMappingEntity = new Entity( "recipientMappingEntity", questionKey + new Integer(request.getRecipientIdList()[i]).toString());
+			if( recipientMappingEntity.getProperties().size() != 2 ) {
+				recipientMappingEntity.setProperty("questionKey", questionKey);
+				recipientMappingEntity.setProperty("recipient", request.getRecipientIdList()[i]);
+				recipientMappingEntityList.add(recipientMappingEntity);
+			}
+		
+		}
+		
+		datastore.put(recipientMappingEntityList);
 	}
 	
 	@SuppressWarnings("deprecation")
-	@RequestMapping(value="/get", method = RequestMethod.GET)
+	@RequestMapping(value="/my/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public GetRelatedQuestionsResponse createQuestion(@PathVariable int id ) throws NotFoundException {
+	public GetRelatedQuestionsResponse getMyQuestions(@PathVariable int id ) throws NotFoundException {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		// create a new question
-		Query query = new Query("question");
-		query.addFilter("owner", FilterOperator.EQUAL, id);
+		// get questions from question -owner table
+		Filter ownerFilter = new FilterPredicate("owner",FilterOperator.EQUAL,id);
+		Query query = new Query("questionEntity").setFilter(ownerFilter);	
 		PreparedQuery pq = datastore.prepare(query);
 		Iterable<Entity> entityIterable= pq.asIterable();
 		Iterator<Entity> entityIterator = entityIterable.iterator();
@@ -112,18 +134,56 @@ public class MylocationController {
 			Entity entity = (Entity)entityIterator.next();
 			Question question = new Question();
 			String questionStr = (String) entity.getProperty("question");
-			int owner = (Integer) entity.getProperty("owner");
-			int[] recipientList = (int[]) entity.getProperty("recipient");
-			String[] answers  = (String[]) entity.getProperty("answers");
+			int owner = new Integer(entity.getProperty("owner").toString());
 			question.setQuestionStr(questionStr);
-			question.setAnswers(answers);
 			question.setOwnerId(owner);
-			question.setRecipientIdList(recipientList);
 			questionsList.add(question);
 			
 		}
+		
 		GetRelatedQuestionsResponse response = new GetRelatedQuestionsResponse();
-		response.setQuestions((Question[])questionsList.toArray());
+		response.setQuestions(questionsList.toArray(new Question[questionsList.size()]));
+		return response;
+		
+	}
+	
+	@SuppressWarnings("deprecation")
+	@RequestMapping(value="/related/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public GetRelatedQuestionsResponse getAssociatedQuestions(@PathVariable int id ) throws NotFoundException {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		// get questionkeys from question -recipientMapping table
+		Filter recipientFilter = new FilterPredicate("recipient",FilterOperator.EQUAL,id);
+		Query recipientTableQuery = new Query("recipientMapping").setFilter(recipientFilter);	
+		PreparedQuery pqr = datastore.prepare(recipientTableQuery);
+		Iterable<Entity> rentityIterable= pqr.asIterable();
+		Iterator<Entity> rentityIterator = rentityIterable.iterator();
+		List<String> questionKeyList = new ArrayList<String>();
+		while( rentityIterator.hasNext()) {
+			Entity entity = (Entity)rentityIterator.next();
+			String questionStr = entity.getProperty("questionKey").toString();
+			questionKeyList.add(questionStr);
+		}
+		
+		// get question strings from question -owner table
+		Filter questionKeyFilter = new FilterPredicate( Entity.KEY_RESERVED_PROPERTY,FilterOperator.IN,questionKeyList);
+		Query questionTableQuery = new Query("question").setFilter(questionKeyFilter);
+		PreparedQuery pqq = datastore.prepare(questionTableQuery);
+		Iterable<Entity> qentityIterable= pqq.asIterable();
+		Iterator<Entity> qentityIterator = qentityIterable.iterator();
+		List<Question> questionsList = new ArrayList<Question>();
+		while( qentityIterator.hasNext()) {
+			Entity entity = (Entity)qentityIterator.next();
+			Question question = new Question();
+			String questionStr = (String) entity.getProperty("question");
+			int owner = new Integer(entity.getProperty("owner").toString());
+			question.setQuestionStr(questionStr);
+			question.setOwnerId(owner);
+			questionsList.add(question);
+		}
+		
+		GetRelatedQuestionsResponse response = new GetRelatedQuestionsResponse();
+		response.setQuestions(questionsList.toArray(new Question[questionsList.size()]));
 		return response;
 		
 	}
